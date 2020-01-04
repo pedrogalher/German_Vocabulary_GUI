@@ -44,18 +44,35 @@ class GermanGUI:
         self.de_entry.pack()
         # Check answer Button
         self.check_button = Button(master, text="Check Answer",
-                                   command=lambda: self.check_answer(
-                                           self.de_entry.get()))
+                                   command=lambda: self.check_answer(None))  # If the buton is pressed, it means that no key has been pressed, then event=None
         self.check_button.pack()
+        self.master.bind('<Return>', self.check_answer)  # Alternatively, check is made pressing the Enter key
         # Close Button
         self.close_button = Button(master, text="Close", command=master.quit)
         self.close_button.pack()
         # Counter Words
         self.counter = 0
+        self.counter_text = Text(master, height=1, width=4)
+        self.counter_text.insert(END, self.counter)
+        self.counter_text.tag_configure("center", justify='center')
+        self.counter_text.tag_add("center", 1.0, "end")
+        self.counter_text.pack()
         #  Counter Success at first try
         self.success = 0
+        self.flag = 1  # Will serve to decide whether the solution was given at first try or not
+        self.success_text = Text(master, height=1, width=4)
+        self.success_text.insert(END, self.success)
+        self.success_text.tag_configure("center", justify='center')
+        self.success_text.tag_add("center", 1.0, "end")
+        self.success_text.pack()
         #  Success Rate
         self.success_rate = 0
+        self.success_rate_text = Text(master, height=1, width=6)
+        self.success_rate_text.insert(END, self.success)
+        self.success_rate_text.tag_configure("center", justify='center')
+        self.success_rate_text.tag_add("center", 1.0, "end")
+        self.success_rate_text.pack()
+        
         
     def select_file(self):
         self.filename = filedialog.askopenfilename(
@@ -75,6 +92,8 @@ class GermanGUI:
         self.de, self.es = self.select_words(id_word)
         self.es_text.insert(END, self.es)
         self.es_text.config(state=DISABLED)
+        self.es_text.tag_configure("center", justify='center')
+        self.es_text.tag_add("center", 1.0, "end")
         return nb_words, id_word
 
     def select_words(self, i):
@@ -85,16 +104,42 @@ class GermanGUI:
         de = self.df.iat[i, 1]
         return de, es
 
-    def check_answer(self, answer):
+    def check_answer(self, event=None):
+        answer = self.de_entry.get()
         if answer == self.de:
             print(" Well done!")
             self.es_text.config(state=NORMAL)
-            self.es_text.delete(1.0, END)
-            self.de_entry.delete(0,END)
+            self.es_text.delete(1.0, END)  # Delete the text and wait for next spanish word
+            self.de_entry.delete(0,END)  # Delete the previous entry
+            self.counter_text.delete(1.0, END)
+            self.counter += 1
+            self.counter_text.insert(END, self.counter)
+            self.counter_text.config(state=NORMAL)
+            self.counter_text.tag_configure("center", justify='center')
+            self.counter_text.tag_add("center", 1.0, "end")
+            self.success_rate_text.delete(1.0, END)
+            self.success_rate = (self.success/self.counter)*100
+            self.success_rate_text.insert(END, self.success_rate)
+            self.success_rate_text.config(state=NORMAL)
+            self.success_rate_text.tag_configure("center", justify='center')
+            self.success_rate_text.tag_add("center", 1.0, "end")
+            
+            if self.flag == 1:
+                self.success_text.delete(1.0, END)
+                self.success +=1
+                self.success_text.insert(END, self.success)
+                self.success_text.config(state=NORMAL)
+                self.success_text.tag_configure("center", justify='center')
+                self.success_text.tag_add("center", 1.0, "end")
+                
+            else:
+                self.flag = 1
+            
         else:
             print("Try again!")
             self.de_entry.delete(0,END)
             self.de_entry.insert(END,self.de)
+            self.flag = 0
     
     
 if __name__ == "__main__":
