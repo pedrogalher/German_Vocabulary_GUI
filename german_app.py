@@ -20,43 +20,49 @@ class GermanGUI:
         https://python-textbok.readthedocs.io/en/1.0/Introduction_to_GUI_Programming.html
         https://www.geeksforgeeks.org/indexing-and-selecting-data-with-pandas/
         http://effbot.org/
+        https://effbot.org/tkinterbook/grid.htm
+        https://www.homeandlearn.uk/python-database-form-tabs.html
+        https://www.tutorialspoint.com/python/tk_frame.htm
     """
 
     def __init__(self, master):
         self.master = master
         master.title("Learn German NOW")
-        self.label_top = Label(master, text="German Word")
-        self.label_top.pack()
+        self.label_top = Label(master, text="German Word").grid(row=0, columnspan=2)
+        
         # Select File Button
         self.select_file_button = Button(master, text="Select File",
-                               command=self.select_file)
-        self.select_file_button.pack()
+                               command=self.select_file).grid(row=1, columnspan=2)
+        
         # Show Spanish word Button
         self.show_es_button = Button(master, text="Next Spanish Word", 
-                                     command=self.random_word)
-        self.show_es_button.pack()
+                                     command=self.random_word).grid(row=2, columnspan=2)
+       
         # Text associated to Spanish Word
-        self.es_text = Text(master, height=5, width=20)
-        self.es_text.pack()
+        self.es_text = Text(master, height=5, width=20).grid(row=3, columnspan=2)
+        
         # Text associated to German Word
         self.de_entry = Entry(master)
-        self.de_entry.delete(0,END)
-        self.de_entry.pack()
+        self.de_entry.delete(0, END)
+        self.de_entry.grid(row=5, column=0)
+        
         # Check answer Button
         self.check_button = Button(master, text="Check Answer",
-                                   command=lambda: self.check_answer(None))  # If the buton is pressed, it means that no key has been pressed, then event=None
-        self.check_button.pack()
+                                   command=lambda: self.check_answer(None)).grid(row=5, column=1)  # If the buton is pressed, it means that no key has been pressed, then event=None
+        
         self.master.bind('<Return>', self.check_answer)  # Alternatively, check is made pressing the Enter key
         # Close Button
-        self.close_button = Button(master, text="Close", command=master.quit)
-        self.close_button.pack()
+        self.close_button = Button(master, text="Close", command=master.quit).grid(row=10, columnspan=2)
+        
         # Counter Words
         self.counter = 0
         self.counter_text = Text(master, height=1, width=4)
         self.counter_text.insert(END, self.counter)
         self.counter_text.tag_configure("center", justify='center')
         self.counter_text.tag_add("center", 1.0, "end")
-        self.counter_text.pack()
+        self.counter_text.grid(row=6, column=1)
+        self.counter_label = Label(master, text="Counter words").grid(row=6, column=0)
+        
         #  Counter Success at first try
         self.success = 0
         self.flag = 1  # Will serve to decide whether the solution was given at first try or not
@@ -64,16 +70,21 @@ class GermanGUI:
         self.success_text.insert(END, self.success)
         self.success_text.tag_configure("center", justify='center')
         self.success_text.tag_add("center", 1.0, "end")
-        self.success_text.pack()
+        self.success_text.grid(row=7, column=1)
+        self.success_label=Label(master, text="Correct words at first try").grid(row=7, column=0)
+    
         #  Success Rate
         self.success_rate = 0
         self.success_rate_text = Text(master, height=1, width=6)
         self.success_rate_text.insert(END, self.success)
         self.success_rate_text.tag_configure("center", justify='center')
         self.success_rate_text.tag_add("center", 1.0, "end")
-        self.success_rate_text.pack()
+        self.success_rate_text.grid(row=8, column=1)
+        self.success_rate_label = Label(master, text="Success Ratio").grid(row=8, column=0)
         
+        # Timer
         
+    
     def select_file(self):
         self.filename = filedialog.askopenfilename(
                 initialdir="/", title="Select file",
@@ -138,7 +149,7 @@ class GermanGUI:
         else:
             print("Try again!")
             self.de_entry.delete(0,END)
-            self.de_entry.insert(END,self.de)
+            self.de_entry.insert(END, self.de)
             self.flag = 0
     
     
